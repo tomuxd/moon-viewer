@@ -1,5 +1,4 @@
-
-// === Three.js Basic Setup ===
+// === Three.js Moon Viewer with Controls ===
 let scene, camera, renderer, moon, controls;
 
 init();
@@ -14,11 +13,12 @@ function init() {
   camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
   camera.position.set(0, 0, 5);
 
+  const viewerDiv = document.getElementById('viewer');
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(width, height);
-  document.body.appendChild(renderer.domElement);
+  viewerDiv.appendChild(renderer.domElement);
 
-  // === Light ===
+  // === Lights ===
   const ambient = new THREE.AmbientLight(0xffffff, 0.4);
   scene.add(ambient);
 
@@ -26,7 +26,7 @@ function init() {
   directional.position.set(5, 3, 5);
   scene.add(directional);
 
-  // === Moon Geometry ===
+  // === Moon Sphere ===
   const geometry = new THREE.SphereGeometry(2, 64, 64);
   const texture = new THREE.TextureLoader().load(
     "https://threejs.org/examples/textures/moon_1024.jpg"
