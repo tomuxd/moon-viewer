@@ -1,64 +1,291 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Moon Viewer</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Moon Crater Registry — Viewer</title>
+  <link rel="stylesheet" href="styles/style.css" />
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
   <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-      background: black;
-      color: white;
-      font-family: sans-serif;
+    /* minimal inline styles so page works out-of-the-box */
+    html,body { height:100%; margin:0; background:#000; font-family:Inter, system-ui, sans-serif; }
+    model-viewer { width:100%; height:100vh; display:block; }
+    #infoPanel {
+      position: absolute; left:18px; top:18px; z-index: 20;
+      background: rgba(0,0,0,0.55); color:#fff; padding:12px 14px; border-radius:8px;
+      max-width:320px; box-shadow:0 8px 20px rgba(0,0,0,0.6);
     }
-    #viewer {
-      width: 100%;
-      height: 100vh;
+    #craterPopup {
+      position: absolute; right:18px; bottom:18px; z-index:30;
+      background: rgba(10,10,10,0.88); color:#fff; padding:14px; border-radius:10px;
+      width:320px; display:none; box-shadow:0 10px 30px rgba(0,0,0,0.6);
     }
-    #controls {
-      position: absolute;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      gap: 10px;
-      z-index: 10;
+    #craterPopup h3 { margin:0 0 8px 0; font-size:1.05rem; }
+    #craterPopup p { margin:6px 0; font-size:0.9rem; color:#ddd; }
+    .btn {
+      display:inline-block; padding:8px 12px; border-radius:8px; background:#0b84ff; color:white; text-decoration:none;
+      border:none; cursor:pointer; font-weight:600;
     }
-    #controls button {
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      border-radius: 6px;
-      color: white;
-      padding: 8px 12px;
-      cursor: pointer;
-      backdrop-filter: blur(6px);
-      transition: background 0.2s;
-    }
-    #controls button:hover {
-      background: rgba(255, 255, 255, 0.3);
-    }
-    canvas {
-      display: block;
-    }
+    .btn.secondary { background:#444; margin-left:8px; }
+    .status-available { color: #9fff9f; font-weight:700; }
+    .status-taken { color: #ff9f9f; font-weight:700; }
   </style>
 </head>
 <body>
-  <div id="viewer"></div>
+  <!-- model-viewer loads your GLB (self-hosted) -->
+  <model-viewer id="moonViewer"
+    src="assets/moon.glb"
+    alt="3D Moon model"
+    camera-controls
+    auto-rotate
+    rotation-per-second="8deg"
+    exposure="1.1"
+    environment-image="neutral"
+    touch-action="pan-y"
+    style="background:#000;">
+  </model-viewer>
 
-  <div id="controls">
-    <button id="zoomIn">Zoom In</button>
-    <button id="zoomOut">Zoom Out</button>
-    <button id="rotLeft">←</button>
-    <button id="rotRight">→</button>
-    <button id="rotUp">↑</button>
-    <button id="rotDown">↓</button>
-    <button id="reset">Reset</button>
+  <!-- small info panel -->
+  <div id="infoPanel">
+    <strong>Moon Crater Registry</strong>
+    <div style="margin-top:8px; font-size:0.9rem; color:#ddd;">
+      Click a crater marker to view details. Markers: <span style="color:#9fff9f">Available</span>, <span style="color:#ff9f9f">Taken</span>.
+    </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/examples/js/controls/OrbitControls.js"></script>
-  <script src="script.js"></script>
+  <!-- Crater popup (in-iframe) -->
+  <div id="craterPopup" role="dialog" aria-hidden="true">
+    <h3 id="cp-name">Crater Name</h3>
+    <p id="cp-coords">Lat / Lon</p>
+    <p id="cp-size">Diameter: — km</p>
+    <p>Category: <span id="cp-category"></span></p>
+    <p>Price: <strong id="cp-price"></strong></p>
+    <p>Status: <span id="cp-status"></span></p>
+    <div style="margin-top:10px;">
+      <button id="btnClaim" class="btn">Claim / Buy</button>
+      <button id="btnClose" class="btn secondary">Close</button>
+    </div>
+  </div>
+
+<script type="module">
+  // -------------------------
+  // CONFIG: allowed parent origin
+  // -------------------------
+  const ALLOWED_PARENT = 'https://tomuxd.github.io'; // <-- keep this domain
+  // -------------------------
+
+  const viewer = document.querySelector('#moonViewer');
+  const popup = document.getElementById('craterPopup');
+  const cpName = document.getElementById('cp-name');
+  const cpCoords = document.getElementById('cp-coords');
+  const cpSize = document.getElementById('cp-size');
+  const cpCategory = document.getElementById('cp-category');
+  const cpPrice = document.getElementById('cp-price');
+  const cpStatus = document.getElementById('cp-status');
+  const btnClaim = document.getElementById('btnClaim');
+  const btnClose = document.getElementById('btnClose');
+
+  let craterMeshes = [];        // three.js meshes
+  let threeRenderer = null;
+  let threeScene = null;
+  let threeCamera = null;
+  let raycaster = null;
+  let demoCraters = [];         // loaded from JSON
+  let selectedCrater = null;
+
+  // Pricing tiers (business rule)
+  function priceForDiameter(d) {
+    // small <=3, medium >3 && <=6, large >6 && <=10
+    if (d <= 3) return { tier: 'Small', price: 29 };
+    if (d > 3 && d <= 6) return { tier: 'Medium', price: 39 };
+    if (d > 6 && d <= 10) return { tier: 'Large', price: 59 };
+    // outside defined range -> calculate fallback
+    return { tier: 'Custom', price: Math.round((d || 1) * 6) };
+  }
+
+  // utility: lat/lon -> xyz on sphere (assumes model radius ~1)
+  function latLonToXYZ(lat, lon, radius=1) {
+    const phi = (90 - lat) * (Math.PI / 180);
+    const theta = (lon + 180) * (Math.PI / 180);
+    const x = -(radius * Math.sin(phi) * Math.cos(theta));
+    const z = (radius * Math.sin(phi) * Math.sin(theta));
+    const y = (radius * Math.cos(phi));
+    return { x, y, z };
+  }
+
+  // Create popup content
+  function showPopupFor(crater) {
+    selectedCrater = crater;
+    cpName.textContent = crater.name;
+    cpCoords.textContent = `Lat: ${crater.lat.toFixed(4)}, Lon: ${crater.lng.toFixed(4)}`;
+    cpSize.textContent = `Diameter: ${crater.diameter} km`;
+    const p = priceForDiameter(crater.diameter);
+    cpCategory.textContent = `${p.tier} (${crater.diameter} km)`;
+    cpPrice.textContent = `$${p.price} (base)`;
+    cpStatus.textContent = crater.status === 'available' ? 'Available' : 'Taken';
+    cpStatus.className = crater.status === 'available' ? 'status-available' : 'status-taken';
+    popup.style.display = 'block';
+    popup.setAttribute('aria-hidden', 'false');
+
+    // set claim button behavior
+    if (crater.status === 'available') {
+      btnClaim.disabled = false;
+      btnClaim.textContent = 'Claim / Buy';
+      btnClaim.onclick = () => {
+        // send message to parent to handle checkout/claim
+        window.parent.postMessage({ type: 'claim-crater', crater }, ALLOWED_PARENT);
+        // also open placeholder checkout URL (parent should implement real checkout)
+        window.open(`/checkout.html?craterId=${encodeURIComponent(crater.id)}&name=${encodeURIComponent(crater.name)}`, '_blank');
+      };
+    } else {
+      btnClaim.disabled = true;
+      btnClaim.textContent = 'Unavailable';
+      btnClaim.onclick = null;
+    }
+  }
+
+  btnClose.addEventListener('click', () => {
+    popup.style.display = 'none';
+    popup.setAttribute('aria-hidden', 'true');
+    // unselect highlight via parent message
+    window.parent.postMessage({ type: 'crater-deselected' }, ALLOWED_PARENT);
+  });
+
+  // handle messages from parent (controls + highlighting)
+  window.addEventListener('message', (event) => {
+    if (event.origin !== ALLOWED_PARENT) return;
+    const data = event.data || {};
+    const { type, value, craterId } = data;
+
+    switch (type) {
+      case 'zoom':
+        // value: 0-100
+        // convert to camera-orbit radius; smaller value -> closer
+        // set camera-orbit with model-viewer attribute (azimuth elevation radius)
+        const r = 1.0 + (1 - (value/100)) * 2.0; // range ~1-3
+        viewer.setAttribute('camera-orbit', `0deg 75deg ${r}m`);
+        break;
+
+      case 'rotation':
+        // degrees
+        viewer.setAttribute('camera-orbit', `${value}deg 75deg auto`);
+        break;
+
+      case 'reset':
+        viewer.setAttribute('camera-orbit', '0deg 75deg auto');
+        break;
+
+      case 'highlight-crater':
+        if (!craterMeshes) return;
+        craterMeshes.forEach(m => m.material.color.setHex(m.userData.status === 'available' ? 0x7fffa5 : 0xff6b6b));
+        if (craterId) {
+          const target = craterMeshes.find(m => m.userData.id === craterId);
+          if (target) {
+            target.material.color.setHex(0x0099ff);
+            // optionally show popup in iframe
+            showPopupFor(target.userData);
+          }
+        }
+        break;
+
+      default:
+        console.log('unknown parent message', data);
+    }
+  });
+
+  // once model loads we can access Three internals
+  viewer.addEventListener('load', async () => {
+    // delay a tick so internals are ready
+    await new Promise(r => setTimeout(r, 50));
+
+    // Access internal three.js renderer/scene/camera via model-viewer internals
+    try {
+      // model-viewer exposes a renderer property
+      threeRenderer = viewer.renderer && viewer.renderer.renderer ? viewer.renderer.renderer : viewer.renderer?.threeRenderer;
+      // different model-viewer versions use different property names
+      if (!threeRenderer && viewer.renderer) threeRenderer = viewer.renderer.threeRenderer;
+      threeScene = viewer.scene; // scene root
+      // viewer.getCamera() returns an HTMLCamera-like object - we use its internal
+      threeCamera = viewer.getCamera ? viewer.getCamera() : null;
+    } catch (e) {
+      console.warn('Could not access three internals on this model-viewer version', e);
+    }
+
+    // If we couldn't get three objects, fallback to not using Three markers
+    if (!threeRenderer || !threeScene) {
+      console.warn('Three.js internals not accessible — marker rendering may fail in this viewer build.');
+      return;
+    }
+
+    // Prepare raycaster and mouse
+    raycaster = new THREE.Raycaster();
+
+    // load crater json
+    try {
+      const res = await fetch('assets/craters.json');
+      demoCraters = await res.json();
+    } catch (e) {
+      console.error('Failed to load craters.json', e);
+      demoCraters = [];
+    }
+
+    // create markers
+    const radius = 1.0; // adjust if your model scale differs
+    craterMeshes = [];
+
+    demoCraters.forEach(crater => {
+      const pos = latLonToXYZ(crater.lat, crater.lng, radius);
+      const geometry = new THREE.SphereGeometry(0.015, 8, 8);
+      const isAvailable = crater.status === 'available';
+      const color = isAvailable ? 0x7fffa5 : 0xff6b6b; // green or red
+      const material = new THREE.MeshBasicMaterial({ color });
+      const mesh = new THREE.Mesh(geometry, material);
+      mesh.position.set(pos.x, pos.y, pos.z);
+      // ensure marker faces outward slightly by using lookAt center then offset outward
+      mesh.lookAt(0,0,0);
+      mesh.userData = crater;
+      // push to scene (attach to first child so it rotates with model)
+      if (threeScene.children && threeScene.children.length) {
+        threeScene.children[0].add(mesh);
+      } else {
+        threeScene.add(mesh);
+      }
+      craterMeshes.push(mesh);
+    });
+
+    // click handler using renderer.domElement
+    const canvas = threeRenderer.domElement || threeRenderer.domElement;
+    if (canvas) {
+      canvas.addEventListener('click', (ev) => {
+        const rect = canvas.getBoundingClientRect();
+        const x = ((ev.clientX - rect.left) / rect.width) * 2 - 1;
+        const y = -((ev.clientY - rect.top) / rect.height) * 2 + 1;
+        raycaster.setFromCamera(new THREE.Vector2(x,y), viewer.getCamera ? viewer.getCamera() : threeCamera);
+        const intersects = raycaster.intersectObjects(craterMeshes, true);
+        if (intersects.length) {
+          const hit = intersects[0].object;
+          // reset colors
+          craterMeshes.forEach(m => {
+            const s = m.userData.status === 'available' ? 0x7fffa5 : 0xff6b6b;
+            m.material.color.setHex(s);
+          });
+          // highlight selected
+          hit.material.color.setHex(0x0099ff);
+          const crater = hit.userData;
+          // show popup inside iframe
+          showPopupFor(crater);
+          // notify parent
+          window.parent.postMessage({ type: 'crater-selected', crater }, ALLOWED_PARENT);
+        }
+      });
+    }
+
+    // tell parent iframe is ready
+    window.parent.postMessage({ type: 'iframe-ready' }, ALLOWED_PARENT);
+  }); // viewer load end
+
+  // accessibility - hide popup on Esc
+  window.addEventListener('keydown', (e) => { if (e.key === 'Escape') { popup.style.display='none'; }});
+</script>
 </body>
 </html>
