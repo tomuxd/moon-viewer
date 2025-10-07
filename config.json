@@ -1,11 +1,7 @@
 {
   "moonViewer": {
     "defaultCamera": {
-      "position": [
-        0,
-        0,
-        5
-      ],
+      "position": [0, 0, 5],
       "zoom": 50,
       "rotation": 0
     },
@@ -46,19 +42,12 @@
       "https://your-domain.com"
     ],
     "messageTypes": {
-      "incoming": [
-        "UPDATE_MOON_VIEW",
-        "CRATER_DATA"
-      ],
-      "outgoing": [
-        "MOON_READY",
-        "CRATER_CLICKED",
-        "VIEW_CHANGED"
-      ]
+      "incoming": ["UPDATE_MOON_VIEW", "CRATER_DATA"],
+      "outgoing": ["MOON_READY", "CRATER_CLICKED", "VIEW_CHANGED"]
     }
   },
   "assets": {
-    "moonModelUrl": "moon.glb",
+    "moonModelUrl": "Moon.glb",
     "textureQuality": "high",
     "compressionEnabled": true
   }
