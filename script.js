@@ -83,7 +83,7 @@ class MoonViewer {
     loadMoon() {
         const loader = new THREE.GLTFLoader();
         
-        // Replace with your actual Moon.glb URL from GitHub
+        // Replace with your actual moon.glb URL from GitHub
         const moonUrl = 'https://github.com/tomuxd/moon-viewer/raw/refs/heads/main/assets/moon.glb';
         
         loader.load(
