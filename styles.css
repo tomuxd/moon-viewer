@@ -1,0 +1,186 @@
+/* Moon Viewer Iframe Styles */
+body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background: transparent;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+
+#container {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+}
+
+#loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 500;
+    z-index: 1000;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 20px 30px;
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+}
+
+/* Crater Markers */
+.crater-marker {
+    position: absolute;
+    pointer-events: auto;
+    cursor: pointer;
+    z-index: 100;
+    transform-origin: center;
+    transition: all 0.2s ease;
+}
+
+.crater-marker:hover {
+    z-index: 101;
+    transform: translate(-50%, -50%) scale(1.1);
+}
+
+.crater-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.crater-dot:hover {
+    transform: scale(1.2);
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+}
+
+/* Crater status colors */
+.crater-dot.available {
+    background: #10b981; /* Green - available */
+    border-color: #065f46;
+}
+
+.crater-dot.taken {
+    background: #ef4444; /* Red - taken */
+    border-color: #991b1b;
+}
+
+.crater-dot.official {
+    background: #3b82f6; /* Blue - official */
+    border-color: #1e40af;
+}
+
+.crater-dot.selected {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    box-shadow: 0 0 12px rgba(255, 255, 255, 1);
+    border-width: 3px;
+}
+
+/* Crater Labels */
+.crater-label {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.crater-marker:hover .crater-label {
+    opacity: 1;
+}
+
+/* Theme Support */
+.theme-light {
+    color: #1f2937;
+}
+
+.theme-light .crater-label {
+    background: rgba(255, 255, 255, 0.9);
+    color: #1f2937;
+    border-color: rgba(0, 0, 0, 0.2);
+}
+
+.theme-light #loading {
+    background: rgba(255, 255, 255, 0.9);
+    color: #1f2937;
+}
+
+.theme-dark {
+    color: #ffffff;
+}
+
+.theme-dark .crater-label {
+    background: rgba(0, 0, 0, 0.8);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.theme-dark #loading {
+    background: rgba(0, 0, 0, 0.7);
+    color: #ffffff;
+}
+
+/* Animations */
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.8;
+        transform: scale(1.1);
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .crater-dot {
+        width: 10px;
+        height: 10px;
+    }
+    
+    .crater-label {
+        font-size: 10px;
+        padding: 3px 6px;
+    }
+    
+    #loading {
+        font-size: 16px;
+        padding: 15px 20px;
+    }
+}
+
+/* Performance optimizations */
+.crater-marker {
+    will-change: transform;
+}
+
+.crater-dot {
+    will-change: transform, box-shadow;
+}
+
+/* Hide scrollbars */
+::-webkit-scrollbar {
+    display: none;
+}
+
+* {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
