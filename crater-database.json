@@ -1,0 +1,171 @@
+{
+  "craters": [
+    {
+      "id": "copernicus",
+      "name": "Copernicus",
+      "latitude": 9.7,
+      "longitude": -20.1,
+      "diameter": 93.0,
+      "isOfficial": true,
+      "isTaken": true,
+      "takenBy": "Official IAU",
+      "price": 0,
+      "description": "Prominent crater with extensive ray system"
+    },
+    {
+      "id": "tycho",
+      "name": "Tycho",
+      "latitude": -43.3,
+      "longitude": -11.2,
+      "diameter": 85.0,
+      "isOfficial": true,
+      "isTaken": true,
+      "takenBy": "Official IAU",
+      "price": 0,
+      "description": "One of the most prominent craters on the Moon"
+    },
+    {
+      "id": "kepler",
+      "name": "Kepler",
+      "latitude": 8.1,
+      "longitude": -38.0,
+      "diameter": 31.0,
+      "isOfficial": true,
+      "isTaken": true,
+      "takenBy": "Official IAU",
+      "price": 0,
+      "description": "Named after astronomer Johannes Kepler"
+    },
+    {
+      "id": "luna-vista-crater",
+      "name": "Luna Vista",
+      "latitude": 15.5,
+      "longitude": 30.2,
+      "diameter": 12.3,
+      "isOfficial": false,
+      "isTaken": true,
+      "takenBy": "Sarah M.",
+      "price": 0,
+      "description": "Beautiful crater with panoramic views"
+    },
+    {
+      "id": "stellar-haven",
+      "name": "Stellar Haven",
+      "latitude": -25.8,
+      "longitude": -45.1,
+      "diameter": 8.9,
+      "isOfficial": false,
+      "isTaken": true,
+      "takenBy": "Michael R.",
+      "price": 0,
+      "description": "Peaceful crater perfect for stargazing"
+    },
+    {
+      "id": "apollo-memorial",
+      "name": "Apollo Memorial",
+      "latitude": 35.2,
+      "longitude": -60.8,
+      "diameter": 18.4,
+      "isOfficial": false,
+      "isTaken": true,
+      "takenBy": "NASA Heritage Foundation",
+      "price": 0,
+      "description": "Commemorating the Apollo missions"
+    },
+    {
+      "id": "available-001",
+      "name": "Celestial Grove",
+      "latitude": 22.1,
+      "longitude": 15.3,
+      "diameter": 7.2,
+      "isOfficial": false,
+      "isTaken": false,
+      "price": 29,
+      "description": "Small crater perfect for personal naming"
+    },
+    {
+      "id": "available-002",
+      "name": "Moonbeam Valley",
+      "latitude": -12.4,
+      "longitude": 42.7,
+      "diameter": 11.8,
+      "isOfficial": false,
+      "isTaken": false,
+      "price": 29,
+      "description": "Medium-sized crater with gentle slopes"
+    },
+    {
+      "id": "available-003",
+      "name": "Cosmic Sanctuary",
+      "latitude": 45.6,
+      "longitude": -25.9,
+      "diameter": 6.1,
+      "isOfficial": false,
+      "isTaken": false,
+      "price": 29,
+      "description": "Intimate crater ideal for memorials"
+    },
+    {
+      "id": "available-004",
+      "name": "Starlight Basin",
+      "latitude": -38.2,
+      "longitude": 67.4,
+      "diameter": 14.7,
+      "isOfficial": false,
+      "isTaken": false,
+      "price": 39,
+      "description": "Large crater with spectacular rim features"
+    },
+    {
+      "id": "available-005",
+      "name": "Tranquil Heights",
+      "latitude": 8.9,
+      "longitude": -52.1,
+      "diameter": 9.3,
+      "isOfficial": false,
+      "isTaken": false,
+      "price": 29,
+      "description": "Elevated crater with panoramic surroundings"
+    },
+    {
+      "id": "available-006",
+      "name": "Luna's Garden",
+      "latitude": -18.7,
+      "longitude": 88.2,
+      "diameter": 5.8,
+      "isOfficial": false,
+      "isTaken": false,
+      "price": 29,
+      "description": "Charming small crater near the lunar limb"
+    },
+    {
+      "id": "available-007",
+      "name": "Ethereal Peaks",
+      "latitude": 52.3,
+      "longitude": 34.6,
+      "diameter": 16.2,
+      "isOfficial": false,
+      "isTaken": false,
+      "price": 39,
+      "description": "Dramatic crater with prominent central peaks"
+    },
+    {
+      "id": "available-008",
+      "name": "Serenity Circle",
+      "latitude": -5.4,
+      "longitude": -78.9,
+      "diameter": 10.1,
+      "isOfficial": false,
+      "isTaken": false,
+      "price": 29,
+      "description": "Perfectly circular crater for peaceful reflection"
+    }
+  ],
+  "metadata": {
+    "totalCraters": 15,
+    "availableCraters": 8,
+    "officialCraters": 3,
+    "lastUpdated": "2024-01-15T00:00:00Z",
+    "dataSource": "NASA Lunar Reconnaissance Orbiter"
+  }
+}
