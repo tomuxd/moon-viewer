@@ -58,7 +58,7 @@
     }
   },
   "assets": {
-    "moonModelUrl": "Moon.glb",
+    "moonModelUrl": "moon.glb",
     "textureQuality": "high",
     "compressionEnabled": true
   }
