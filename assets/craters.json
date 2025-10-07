@@ -1,0 +1,162 @@
+[
+  {
+    "id": "CR0001",
+    "name": "Aurora East",
+    "lat": 18.5,
+    "lng": 122.7,
+    "diameter": 2.3,
+    "status": "available"
+  },
+  {
+    "id": "CR0002",
+    "name": "Mare Ridge",
+    "lat": 4.12,
+    "lng": -39.8,
+    "diameter": 5.2,
+    "status": "available"
+  },
+  {
+    "id": "CR0003",
+    "name": "Tranquil Hollow",
+    "lat": 0.6741,
+    "lng": 23.4721,
+    "diameter": 1.9,
+    "status": "taken"
+  },
+  {
+    "id": "CR0004",
+    "name": "Oceanus Arch",
+    "lat": -14.9,
+    "lng": 56.2,
+    "diameter": 3.5,
+    "status": "available"
+  },
+  {
+    "id": "CR0005",
+    "name": "Copernicus (demo)",
+    "lat": 9.7,
+    "lng": -20.1,
+    "diameter": 9.3,
+    "status": "taken"
+  },
+  {
+    "id": "CR0006",
+    "name": "Silent Basin",
+    "lat": -23.5,
+    "lng": 81.12,
+    "diameter": 2.7,
+    "status": "available"
+  },
+  {
+    "id": "CR0007",
+    "name": "Helios Spur",
+    "lat": 31.2,
+    "lng": -12.2,
+    "diameter": 4.8,
+    "status": "available"
+  },
+  {
+    "id": "CR0008",
+    "name": "Tycho (demo)",
+    "lat": -43.3,
+    "lng": -11.2,
+    "diameter": 8.5,
+    "status": "taken"
+  },
+  {
+    "id": "CR0009",
+    "name": "Lunar Vale",
+    "lat": 13.41,
+    "lng": 39.9,
+    "diameter": 6.0,
+    "status": "available"
+  },
+  {
+    "id": "CR0010",
+    "name": "North Plateau",
+    "lat": 62.0,
+    "lng": -30.0,
+    "diameter": 2.1,
+    "status": "available"
+  },
+  {
+    "id": "CR0011",
+    "name": "East Hollow",
+    "lat": -5.3,
+    "lng": -140.2,
+    "diameter": 3.0,
+    "status": "available"
+  },
+  {
+    "id": "CR0012",
+    "name": "Southern Plain",
+    "lat": -29.4,
+    "lng": 20.4,
+    "diameter": 7.2,
+    "status": "available"
+  },
+  {
+    "id": "CR0013",
+    "name": "Obscura",
+    "lat": 2.1,
+    "lng": 10.9,
+    "diameter": 1.2,
+    "status": "taken"
+  },
+  {
+    "id": "CR0014",
+    "name": "Perseus Bowl",
+    "lat": 44.3,
+    "lng": 60.4,
+    "diameter": 5.5,
+    "status": "available"
+  },
+  {
+    "id": "CR0015",
+    "name": "Gale Ridge",
+    "lat": -8.8,
+    "lng": -70.2,
+    "diameter": 3.2,
+    "status": "available"
+  },
+  {
+    "id": "CR0016",
+    "name": "Silver Dune",
+    "lat": 21.9,
+    "lng": 87.4,
+    "diameter": 2.6,
+    "status": "available"
+  },
+  {
+    "id": "CR0017",
+    "name": "Shadow Hollow",
+    "lat": -39.1,
+    "lng": 10.1,
+    "diameter": 4.1,
+    "status": "available"
+  },
+  {
+    "id": "CR0018",
+    "name": "Northwest Basin",
+    "lat": 46.0,
+    "lng": -120.0,
+    "diameter": 6.5,
+    "status": "taken"
+  },
+  {
+    "id": "CR0019",
+    "name": "Luna Cove",
+    "lat": 11.0,
+    "lng": 4.2,
+    "diameter": 1.6,
+    "status": "available"
+  },
+  {
+    "id": "CR0020",
+    "name": "Echo Crater",
+    "lat": -17.3,
+    "lng": 130.2,
+    "diameter": 2.9,
+    "status": "available"
+  }
+]
